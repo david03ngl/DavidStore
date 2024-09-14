@@ -1,0 +1,6 @@
+@DavidStore.Server_HostAddress = http://localhost:5149
+
+GET {{DavidStore.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

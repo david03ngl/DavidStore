@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavidStore.Server", "DavidStore.Server\DavidStore.Server.csproj", "{A0DBD8C0-1A5B-4431-BA49-1E0F8A3D661B}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "davidstore.client", "davidstore.client\davidstore.client.esproj", "{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0DBD8C0-1A5B-4431-BA49-1E0F8A3D661B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0DBD8C0-1A5B-4431-BA49-1E0F8A3D661B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0DBD8C0-1A5B-4431-BA49-1E0F8A3D661B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0DBD8C0-1A5B-4431-BA49-1E0F8A3D661B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{745BF070-05DD-4B3C-B9FE-EEC1604EF3E1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B48E410F-2F7D-45E5-98E8-39999FDDEF78}
+	EndGlobalSection
+EndGlobal
