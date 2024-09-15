@@ -40,6 +40,20 @@ namespace DavidStore.Server.Controllers
             return Ok(productCategory);
         }
 
+        // GET: api/Product/page?limit=&skip=
+        [HttpGet("page")]
+        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetProductCategoriesWithPagination(int limit, int skip)
+        {
+            var productCategories = await _context.ProductCategories.OrderBy(q => q.Name).Skip(skip).Take(limit).ToListAsync();
+
+            var response = new
+            {
+                ProductCategories = productCategories
+            };
+
+            return Ok(response);
+        }
+
         // POST: api/ProductCategories
         [HttpPost]
         public async Task<ActionResult<ProductCategory>> PostProductCategory(ProductCategory productCategory)

@@ -7,10 +7,11 @@ interface IAddToCartBtnProps {
     children?: React.ReactNode;
     price?: number;
     variantName?: string,
-    variantId?: number
+    variantId?: number,
+    disabled: boolean
 }
 
-const AddToCartBtn: FC<IAddToCartBtnProps> = ({ id, price, variantName, variantId, children }) => {
+const AddToCartBtn: FC<IAddToCartBtnProps> = ({ id, price, variantName, variantId, disabled, children }) => {
     const { addToCartProduct } = useActions();
 
     const product = useProductByIdSelector(id);
@@ -34,10 +35,12 @@ const AddToCartBtn: FC<IAddToCartBtnProps> = ({ id, price, variantName, variantI
 
   return (
     <button
-      className='add-to-cart-btn'
-      type='button'
+          className='add-to-cart-btn'
+          type='button'
           data-product-id={id}
           onClick={() => addToCartHandler(id, price, variantName, variantId)}
+          disabled={disabled}
+          style={{ backgroundColor: disabled ? "gray" : "green" }}
     >
       {children}
     </button>

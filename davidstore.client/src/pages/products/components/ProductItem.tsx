@@ -1,18 +1,10 @@
-import { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FC } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import StarIcon from '@mui/icons-material/Star';
 import { IProduct, IProductVariant } from '../../../redux/products/product.types';
-import AddToCartBtn from '../../cart/components/AddToCartBtn';
 
 const ProductItem: FC<IProduct> = ({ id, name, productVariants }) => {
-    const [selectedVariant, setSelectedVariant] = useState<IProductVariant | null>(null);
-
-    // Handle variant selection
-    const handleVariantChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const variantId = Number(event.target.value);
-        const selected = productVariants?.find(variant => variant.id === variantId) || null;
-        setSelectedVariant(selected);
-    };
+    const navigate = useNavigate();
 
     return (
         <div className='product-item'>
@@ -24,35 +16,19 @@ const ProductItem: FC<IProduct> = ({ id, name, productVariants }) => {
             <div className='product-title'>
                 <Link to={`/products/${String(id)}`}>{name}</Link>
             </div>
-            {selectedVariant &&
-                (<div className='product-price'>
-                    ${selectedVariant.price}
-                </div>)
-            }
-            <div className='product-info'>
+            <div className='product-title'>
                 {/*<div className='product-rating'>*/}
                 {/*  <StarIcon />*/}
                 {/*  {rating}*/}
                 {/*</div>*/}
-                {productVariants && productVariants.length > 0 && (
-                    <div className='variant-selector'>
-                        <label htmlFor={`variant-select-${id}`}>Select Variant:</label>
-                        <select
-                            id={`variant-select-${id}`}
-                            onChange={handleVariantChange}
-                            defaultValue=""
-                        >
-                            <option value="" disabled>Select a variant</option>
-                            {productVariants.map(variant => (
-                                <option key={variant.id} value={variant.id}>
-                                    {variant.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+                {productVariants?.map((item, index) => (
+                    <li key={index}>{item.name}</li>
+                ))}
             </div>
-            <AddToCartBtn id={id} price={selectedVariant?.price} variantName={selectedVariant?.name} variantId={selectedVariant?.id}>Buy</AddToCartBtn>
+            <div>
+                <button onClick={() => navigate(`/products/${String(id)}`)}>Edit</button>
+                <button className="Delete">Delete</button>
+            </div>
         </div>
     );
 }

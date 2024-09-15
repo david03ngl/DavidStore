@@ -22,9 +22,9 @@ public class TransactionsController : ControllerBase
 
     // GET: api/Transactions/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Transactions>> GetTransaction(int id)
+    public async Task<ActionResult<Transactions>> GetTransactionById(int id)
     {
-        var transaction = await _context.Transactions.Include(t => t.TransactionDetails)
+        var transaction = await _context.Transactions.Include(t => t.TransactionDetails).ThenInclude(td => td.ProductVariant)
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (transaction == null)
@@ -32,50 +32,48 @@ public class TransactionsController : ControllerBase
             return NotFound();
         }
 
-        return transaction;
+        return Ok(transaction);
     }
 
     // POST: api/Transactions
     [HttpPost]
-    public async Task<ActionResult<Transactions>> PostTransaction(Transactions transaction)
+    public async Task<IActionResult> PostTransaction([FromBody] TransactionCreateDto transactionDto)
     {
-        var transaction2 = new Transactions
+        if(!ModelState.IsValid)
         {
-            TransactionNo = transaction.TransactionNo,
-            TotalAmount = transaction.TotalAmount,
+            return BadRequest();
+        }
+
+        var transaction = new Transactions
+        {
+            TransactionNo = transactionDto.TransactionNo,
+            TotalAmount = transactionDto.TotalAmount,
             Active = true,
-            CreatedUser = "admin",
-            CreatedDate = DateTime.Now,
-            UpdatedUser = "admin",
-            UpdatedDate = DateTime.Now
+            CreatedUser = transactionDto.CreatedUser,
+            CreatedDate = DateTime.Now < new DateTime(1753, 1, 1) ? 
+                                            new DateTime(1753, 1, 1) : DateTime.Now,
+            UpdatedUser = transactionDto.UpdatedUser,
+            UpdatedDate = DateTime.Now < new DateTime(1753, 1, 1) ? 
+                                            new DateTime(1753, 1, 1) : DateTime.Now,
+            TransactionDetails = transactionDto.TransactionDetails.Select(detail => new TransactionDetail
+            {
+                ProductVariantId = detail.ProductVariantId,
+                Price = detail.Price,
+                Qty = detail.Qty,
+                Active = true,
+                CreatedUser = detail.CreatedUser,
+                CreatedDate = DateTime.Now < new DateTime(1753, 1, 1) ? 
+                                                new DateTime(1753, 1, 1) : DateTime.Now,
+                UpdatedUser = detail.UpdatedUser,
+                UpdatedDate = DateTime.Now < new DateTime(1753, 1, 1) ? 
+                                                new DateTime(1753, 1, 1) : DateTime.Now
+            }).ToList()
         };
 
         _context.Transactions.Add(transaction);
         await _context.SaveChangesAsync();
 
-        var newTransaction = transaction;
-
-        for(int i = 0;i < transaction.TransactionDetails.Count; i++)
-        {
-            var newTransactionDetail = new TransactionDetail
-            {
-                TransactionId = transaction.TransactionDetails[i].TransactionId,
-                ProductVariantId = transaction.TransactionDetails[i].ProductVariantId,
-                Price = transaction.TransactionDetails[i].Price,
-                Qty = transaction.TransactionDetails[i].Qty,
-                Subtotal = transaction.TransactionDetails[i].Subtotal,
-                Active = true,
-                CreatedUser = "admin",
-                CreatedDate = DateTime.Now,
-                UpdatedUser = "admin",
-                UpdatedDate = DateTime.Now
-            };
-
-            _context.TransactionDetails.Add(newTransactionDetail);
-            await _context.SaveChangesAsync();
-        }
-
-        return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+        return CreatedAtAction(nameof(GetTransactionById), new { id = transaction.Id }, transaction);
     }
 
     // PUT: api/Transactions/5

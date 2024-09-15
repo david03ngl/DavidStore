@@ -1,19 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// add cors in specific url
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:7207", "https://localhost:5173");
-                      });
+    options.AddPolicy("AllowLocalhost",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:5173") // Frontend origin
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        });
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -42,8 +44,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// enable cors
-app.UseCors(MyAllowSpecificOrigins);
+// Use the CORS policy
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 

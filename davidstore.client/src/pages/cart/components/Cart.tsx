@@ -12,7 +12,7 @@ interface ICartProps {
 const Cart: FC<ICartProps> = ({ products, setIsSubmitOrder }) => {
     const handleSubmit = async (products: any) => {
         const generateRandomString = (length: number) => {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let result = '';
             for (let i = 0; i < length; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -29,33 +29,23 @@ const Cart: FC<ICartProps> = ({ products, setIsSubmitOrder }) => {
         for (let i = 0; i < products.length; i++) {
             totalPrice += products[i].product.price * products[i].quantity;
             transactionDetail.push({
-                Id: 0,
-                TransactionId: 0,
                 ProductVariantId: products[i].product.variantId,
                 Price: products[i].product.price,
                 Qty: products[i].quantity,
-                Subtotal: products[i].product.price * products[i].quantity,
-                Active: true,
                 CreatedUser: "admin",
-                CreatedTime: new Date(),
-                UpdatedUser: "admin",
-                UpdatedTime: new Date()
+                UpdatedUser: "admin"
             })
         }
 
         var transactionData = {
-            Id: 0,
             TransactionNo: transactionNo,
             TotalAmount: totalPrice,
-            Active: true,
             CreatedUser: "admin",
-            CreatedTime: new Date(),
             UpdatedUser: "admin",
-            UpdatedTime: new Date(),
             TransactionDetails: transactionDetail
         };
 
-        //setIsSubmitOrder(true);
+        setIsSubmitOrder(true);
         try {
             const response = await fetch("https://localhost:7207/api/transactions", {
                 method: "POST",

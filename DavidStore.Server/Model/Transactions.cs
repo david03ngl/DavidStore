@@ -12,6 +12,6 @@ namespace DavidStore.Server.Model
         public DateTime UpdatedDate { get; set; }
 
         // Navigation property for related TransactionDetails
-        public List<TransactionDetail>? TransactionDetails { get; set; }
+        public ICollection<TransactionDetail> TransactionDetails { get; set; }
     }
 }

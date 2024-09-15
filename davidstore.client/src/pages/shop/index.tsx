@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useGetProductsQuery } from '../../redux/products/product.api';
-import ProductsList from './components/ProductsList';
+import ProductsList from './components/ShopsList';
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage';
 import Pagination from '../../components/Pagination';
 
-const ProductAdminsPage = () => {
+const ProductsPage = () => {
   const [activePage, setActivePage] = useState(1);
   const { data, error, isLoading } = useGetProductsQuery({
     limit: 10,
@@ -31,4 +31,4 @@ const ProductAdminsPage = () => {
   );
 };
 
-export default ProductAdminsPage;
+export default ProductsPage;

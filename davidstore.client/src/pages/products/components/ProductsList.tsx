@@ -8,10 +8,13 @@ interface IProductsListProps {
 }
 
 const ProductsList: FC<IProductsListProps> = ({ products }) => (
-  <div className='products-list'>
-    {products?.map(product => (
-      <ProductItem key={product.id} {...product} />
-    ))}
+    <div className='products-list'>
+        <button className='add-product-button'>
+            Add Product
+        </button>
+        {products?.map(product => (
+          <ProductItem key={product.id} {...product} />
+        ))}
   </div>
 );
 
