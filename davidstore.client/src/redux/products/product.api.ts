@@ -17,7 +17,7 @@ const productApi = baseApi
       searchProducts: build.query<IGetProductsResponse, { query: string }>({
         query: ({ query }) => `/products/search?q=${query}`,
       }),
-        updateProduct: build.mutation<IProduct, Partial<IProduct>>({
+          updateProduct: build.mutation<void, { id: number;[key: string]: any }>({
             query: (product) => ({
                 url: `product/${product.id}`, // Use the product ID in the URL
                 method: 'PUT',

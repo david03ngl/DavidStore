@@ -83,13 +83,19 @@ const ProductDetails = () => {
             ...updatedVariants[index],
             [name]: value,
         };
+
+        setProducts((prevProducts) => ({
+            ...prevProducts, // Spread previous product properties
+            productVariants: updatedVariants, // Replace ProductVariants with the updated ones
+        }));
+
         setProductVariants(updatedVariants);
     };
 
     // Add a new product variant
     const addProductVariant = () => {
         const newVariant: IProductVariant = {
-            id: Date.now(), // Use a unique identifier for each new variant
+            id: 0, // Use a unique identifier for each new variant
             code: '',
             name: '',
             imageLocation: '',
@@ -114,9 +120,32 @@ const ProductDetails = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        const newVariants = [];
+
+        for (let i = 0; i < productVariants.length; i++){
+            newVariants.push({
+                "id": productVariants[i].id,
+                "code": productVariants[i].code,
+                "name": productVariants[i].name,
+                "imageLocation": productVariants[i].imageLocation,
+                "qty": productVariants[i].qty,
+                "price": productVariants[i].price,
+                "active": productVariants[i].active
+            })
+        }
+
+        const newProduct = {
+            "id": products.id,
+            "plu": products.plu,
+            "name": products.name,
+            "productCategoryId": products.productCategoryId,
+            "active": products.active,
+            "productVariants": newVariants
+        }
+
         try {
             // Call the mutation to update the product in the database
-            await updateProduct(products).unwrap();
+            await updateProduct(newProduct).unwrap();
             console.log('Product updated successfully');
         } catch (error) {
             console.error('Failed to update product:', error);

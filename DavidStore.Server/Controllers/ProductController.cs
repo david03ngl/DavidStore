@@ -63,9 +63,9 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
     {
-        if (productDto == null)
+        if (id != productDto.Id)
         {
-            return BadRequest("ProductDto is required.");
+            return BadRequest("Product ID mismatch");
         }
 
         var product = await _context.Products
@@ -80,26 +80,22 @@ public class ProductController : ControllerBase
         // Update product properties
         product.Plu = productDto.Plu;
         product.Name = productDto.Name;
-        product.ProductCategoryId = productDto.ProductCategoryId; // Set only the ID
+        product.ProductCategoryId = productDto.ProductCategoryId;
         product.Active = productDto.Active;
-        product.CreatedUser = "admin";
-        product.CreatedDate = DateTime.Now;
         product.UpdatedUser = "admin";
         product.UpdatedDate = DateTime.Now;
 
-        // Track existing variant IDs
-        var existingVariantIds = product.ProductVariants.Select(v => v.Id).ToHashSet();
-
+        // Update or add product variants
         foreach (var variantDto in productDto.ProductVariants)
         {
-            // Check if the variant already exists
-            var existingVariant = product.ProductVariants.FirstOrDefault(v => v.Id == variantDto.Id);
+            var existingVariant = product.ProductVariants
+                .FirstOrDefault(v => v.Id == variantDto.Id);
 
             if (existingVariant != null)
             {
-                // Update existing variant
-                existingVariant.Code = variantDto.Code;
+                // Existing variant, update its properties
                 existingVariant.Name = variantDto.Name;
+                existingVariant.Code = variantDto.Code;
                 existingVariant.Price = variantDto.Price;
                 existingVariant.Qty = variantDto.Qty;
                 existingVariant.ImageLocation = variantDto.ImageLocation;
@@ -109,7 +105,7 @@ public class ProductController : ControllerBase
             }
             else
             {
-                // Add new variant
+                // New variant, add it to the database
                 var newVariant = new ProductVariant
                 {
                     ProductId = productDto.Id,
@@ -122,18 +118,19 @@ public class ProductController : ControllerBase
                     CreatedUser = "admin",
                     CreatedDate = DateTime.Now,
                     UpdatedUser = "admin",
-                    UpdatedDate = DateTime.Now,
-                    Product = product
+                    UpdatedDate = DateTime.Now
                 };
 
-                _context.ProductVariants.Add(newVariant);
+                product.ProductVariants.Add(newVariant);
             }
         }
 
+        // Save changes
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
+
 
     // DELETE: api/Product/5
     [HttpDelete("{id}")]
