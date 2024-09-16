@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 // import { useAuthUserSelector } from '../../redux/auth/auth.slice';
-import { useGetCategoriesQuery } from '../../redux/products/product.api';
 // import { useProductsSelector } from '../../redux/products/product.slice';
 import CategoriesList from '../categories/components/CategoriesList';
 // import ProductsList from '../products/components/ProductsList';

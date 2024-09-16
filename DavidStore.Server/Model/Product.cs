@@ -16,6 +16,7 @@ namespace DavidStore.Server.Model
         public ProductCategory ProductCategory { get; set; }
 
         // Navigation property for related ProductVariants
-        public List<ProductVariant> ProductVariants { get; set; }
+        // Navigation property for related TransactionDetails
+        public ICollection<ProductVariant> ProductVariants { get; set; }
     }
 }

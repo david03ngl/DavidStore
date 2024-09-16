@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { useGetCategoryProductsQuery } from '../../../redux/products/product.api';
 import ProductsList from '../../products/components/ProductsList';
 import Loading from '../../../components/Loading';
 import ErrorMessage from '../../../components/ErrorMessage';

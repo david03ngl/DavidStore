@@ -39,7 +39,7 @@ public class ProductController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        var product = await _context.Products.Include(p => p.ProductCategory).Include(p => p.ProductVariants).FirstOrDefaultAsync(p => p.Id == id);
+        var product = await _context.Products.Include(p => p.ProductVariants).FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
         {
@@ -61,14 +61,75 @@ public class ProductController : ControllerBase
 
     // PUT: api/Product/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutProduct(int id, Product product)
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
     {
-        if (id != product.Id)
+        if (productDto == null)
         {
-            return BadRequest();
+            return BadRequest("ProductDto is required.");
         }
 
-        _context.Entry(product).State = EntityState.Modified;
+        var product = await _context.Products
+            .Include(p => p.ProductVariants)
+            .FirstOrDefaultAsync(p => p.Id == productDto.Id);
+
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        // Update product properties
+        product.Plu = productDto.Plu;
+        product.Name = productDto.Name;
+        product.ProductCategoryId = productDto.ProductCategoryId; // Set only the ID
+        product.Active = productDto.Active;
+        product.CreatedUser = "admin";
+        product.CreatedDate = DateTime.Now;
+        product.UpdatedUser = "admin";
+        product.UpdatedDate = DateTime.Now;
+
+        // Track existing variant IDs
+        var existingVariantIds = product.ProductVariants.Select(v => v.Id).ToHashSet();
+
+        foreach (var variantDto in productDto.ProductVariants)
+        {
+            // Check if the variant already exists
+            var existingVariant = product.ProductVariants.FirstOrDefault(v => v.Id == variantDto.Id);
+
+            if (existingVariant != null)
+            {
+                // Update existing variant
+                existingVariant.Code = variantDto.Code;
+                existingVariant.Name = variantDto.Name;
+                existingVariant.Price = variantDto.Price;
+                existingVariant.Qty = variantDto.Qty;
+                existingVariant.ImageLocation = variantDto.ImageLocation;
+                existingVariant.UpdatedDate = DateTime.Now;
+
+                _context.Entry(existingVariant).State = EntityState.Modified;
+            }
+            else
+            {
+                // Add new variant
+                var newVariant = new ProductVariant
+                {
+                    ProductId = productDto.Id,
+                    Code = variantDto.Code,
+                    Name = variantDto.Name,
+                    ImageLocation = variantDto.ImageLocation,
+                    Price = variantDto.Price,
+                    Qty = variantDto.Qty,
+                    Active = true,
+                    CreatedUser = "admin",
+                    CreatedDate = DateTime.Now,
+                    UpdatedUser = "admin",
+                    UpdatedDate = DateTime.Now,
+                    Product = product
+                };
+
+                _context.ProductVariants.Add(newVariant);
+            }
+        }
+
         await _context.SaveChangesAsync();
 
         return NoContent();

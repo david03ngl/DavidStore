@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<Transactions> Transactions { get; set; }
     public DbSet<TransactionDetail> TransactionDetails { get; set; }
+    public DbSet<UserData> UserDatas {  get; set; }  
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

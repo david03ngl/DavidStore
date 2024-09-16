@@ -1,78 +1,55 @@
-import { useState, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import PersonIcon from '@mui/icons-material/Person';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useLoginMutation } from '../../redux/auth/auth.api';
-import { ILogin } from '../../redux/auth/auth.types';
-import useActions from '../../redux/hooks/useActions';
-import './sign.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [inputError, setInputError] = useState('');
-  const [inputSuccess, setInputSuccess] = useState('');
-  const [login] = useLoginMutation();
-  const { setAuthToken, setAuthUserId } = useActions();
-  const navigate = useNavigate();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-  const formSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('https://localhost:7207/api/auth/login', {
+                username,
+                password,
+            });
 
-    const formData = new FormData(e.currentTarget) as Iterable<[ILogin]>;
-    const entries: ILogin = Object.fromEntries(formData);
+            const token = response.data.token;
+            localStorage.setItem('token', token);
 
-    await login(entries)
-      .unwrap()
-      .then(data => {
-        const { token, id } = data;
-        setAuthToken({ token });
-        setAuthUserId({ userId: id });
+            const decodedToken = jwtDecode(token) as any;
+            const userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+             
+            if (userRole === 'Admin') {
+                console.log("halo")
+                navigate('/products');
+            } else if (userRole === "Customer") {
+                navigate('/shop');
+            }
+        } catch (err) {
+            setError('Invalid login credentials');
+        }
+    };
 
-        setInputError('');
-        setInputSuccess('Login successful');
-
-        setTimeout(() => {
-          navigate('/');
-        }, 1000);
-      })
-      .catch(err => {
-        setInputError(err.data.message);
-      });
-  };
-
-  return (
-    <div className='reg-login-page'>
-      <h2>Login</h2>
-      <form action='/login' onSubmit={formSubmitHandler}>
-        <div className={inputError.length ? 'form-item error-item' : 'form-item'}>
-          <div className='form-field with-icon'>
-            <input type='text' name='username' placeholder='Username:' />
-            <PersonIcon />
-          </div>
-          <p className='api-sign-example'>api example: kminchelle</p>
+    return (
+        <div>
+            <form className="form" onSubmit={handleLogin}>
+                <div className="form-group">
+                    <label>Username</label>
+                    <input className="form-control" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                </div>
+                <div className="form-group">
+                    <label>Password</label>
+                    <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                <button className="btn submit-btn" type="submit">Login</button>
+            </form>
+            {error && <p>{error}</p>}
         </div>
-        <div className={inputError.length ? 'form-item error-item' : 'form-item'}>
-          <div className='form-field with-icon'>
-            <input type='password' name='password' placeholder='Password:' />
-            <LockOutlinedIcon />
-          </div>
-          <p className='api-sign-example'>api example: 0lelplR</p>
-          <div className='form-error'>{inputError}</div>
-          <div className='form-success'>{inputSuccess}</div>
-        </div>
-        <div className='form-submit'>
-          <button type='submit'>Sign In</button>
-        </div>
-      </form>
-      <div className='change-sign-form'>
-        <p>
-          If you haven&apos;t an account? <Link to='/register'>Sign Up here</Link>
-        </p>
-        <p>
-          Back to <Link to='/'>Home</Link>
-        </p>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Login;

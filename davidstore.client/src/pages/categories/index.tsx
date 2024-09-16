@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import { useGetCategoriesQuery } from '../../redux/products/product.api';
 import CategoriesList from './components/CategoriesList';
 import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage';

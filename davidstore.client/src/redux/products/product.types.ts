@@ -16,8 +16,8 @@ export interface IProduct {
         createdDate: string;
         updatedUser: string;
         updatedDate: string;
-    };
-    productVariants: any[] | null;
+    } | null;
+    productVariants: IProductVariant[];
 }
 
 export interface IProductVariant {
@@ -28,6 +28,10 @@ export interface IProductVariant {
     qty: number;
     price: number;
     active: boolean;
+    createdUser: string;
+    createdDate: string;
+    updatedUser: string;
+    updatedDate: string;
 }
 
 export interface IGetProductsResponse {
