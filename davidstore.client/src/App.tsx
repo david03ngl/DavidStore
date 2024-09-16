@@ -15,6 +15,7 @@ import CartPage from './pages/cart';
 import ProfilePage from './pages/profile';
 import SearchPage from './pages/shop/search';
 import AuthGuardedRoute from './pages/AuthGuardedRoute';
+import ProtectedRoute from './protectedRoute';
 
 import './App.css';
 
@@ -23,27 +24,19 @@ const App = () => (
         <Route element={<Layout />}>
             <Route path='/' element={<Login />} />
             <Route path='productCategories'>
-                <Route index element={<ProductCategoriesPage />} />
-                <Route path=':id' element={<ProductCategoryDetails />} /> 
+                <Route index element={<ProtectedRoute role="Admin"><ProductCategoriesPage /></ProtectedRoute>} />
+                <Route path=':id' element={<ProtectedRoute role="Admin"><ProductCategoryDetails /></ProtectedRoute>} /> 
             </Route>
             <Route path='products'>
-                <Route index element={<ProductsPage />} />
-                <Route path=':id' element={<ProductDetails />} />
+                <Route index element={<ProtectedRoute role="Admin"><ProductsPage /></ProtectedRoute>} />
+                <Route path=':id' element={<ProtectedRoute role="Admin"><ProductDetails /></ProtectedRoute>} />
             </Route>
             <Route path='shops'>
-                <Route index element={<ShopsPage />} />
-                <Route path=':id' element={<ShopDetails />} />
-                <Route path='categories'>
-                    <Route index element={<CategoriesPage />} />
-                    <Route path=':category' element={<CategoryDetails />} />
-                </Route>
+                <Route index element={<ProtectedRoute role="Customer"><ShopsPage /></ProtectedRoute>} />
+                <Route path=':id' element={<ProtectedRoute role="Customer"><ShopDetails /></ProtectedRoute>} />
                 <Route path='search' element={<SearchPage />} />
             </Route>
             <Route path='cart' element={<CartPage />} />
-
-            <Route element={<AuthGuardedRoute />}>
-                <Route path='profile' element={<ProfilePage />} />
-            </Route>
         </Route>
 
         <Route path='home' element={<HomePage />} />
