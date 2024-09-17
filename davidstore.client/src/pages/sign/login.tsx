@@ -27,7 +27,7 @@ const Login = () => {
                 navigate('/products');
                 window.location.reload();
             } else if (userRole === "Customer") {
-                navigate('/shop');
+                navigate('/shops');
                 window.location.reload();
             }
         } catch (err) {
