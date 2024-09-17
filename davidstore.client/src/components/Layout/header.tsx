@@ -5,38 +5,64 @@ import CartIcon from '@mui/icons-material/ShoppingCart';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import { FC } from 'react';
 import './header.css';
+import { jwtDecode } from 'jwt-decode';
 
 interface HeaderProps {
     isAuthenticated: boolean;
 }
 
-const Header: FC<HeaderProps> = ({ isAuthenticated }) => {
+const Header: FC<HeaderProps> = () => {
+    const token = localStorage.getItem('token');
+    let userRole: string | null = null;
+
+    if (token) {
+        try {
+            const decodedToken = jwtDecode(token) as any;
+            userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+            console.log(userRole)
+        } catch (error) {
+            console.error('Failed to decode token:', error);
+        }
+    }
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        userRole = null;
+        window.location.reload();
+    }
+
     return (
         <header className='header'>
             <Link to='/' className='logo'>
                 <img src={logo} height='40' alt='logo' />
             </Link>
             <nav className='nav-links'>
-                <Link to='/home'>Home</Link>
-                <Link to='/productCategories'>Product Category</Link>
-                <Link to='/products'>Product</Link>
-                <Link to='/transactions'>Transaction</Link>
+                {userRole === 'Admin' && (
+                    <>
+                        <Link to='/home'>Home</Link>
+                        <Link to='/productCategories'>Product Category</Link>
+                        <Link to='/products'>Product</Link>
+                        <Link to='/transactions'>Transaction</Link>
+                    </>
+                )}
+                {userRole === 'Customer' && (
+                    <>
+                        <Link to='/shop'>Shop</Link>
+                    </>
+                )}
             </nav>
             <div className='header-actions'>
-                <Link to='/products/search'>
-                    <SearchIcon />
-                </Link>
-                <Link to='/cart'>
-                    <CartIcon />
-                </Link>
-                {isAuthenticated ? (
-                    <Link to='/profile'>
-                        <PersonOutlineOutlinedIcon />
-                    </Link>
+                {userRole !== null ? (
+                    <>
+                        <Link to='/cart'>
+                            <CartIcon />
+                        </Link>
+                        <Link to='/'>
+                            <button className='login-button' type='button' onClick={logout}>Logout</button>
+                        </Link>
+                    </>
                 ) : (
-                    <Link to='/login'>
-                        <button className='login-button' type='button'>Login</button>
-                    </Link>
+                    <></>
                 )}
             </div>
         </header>

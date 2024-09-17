@@ -24,10 +24,11 @@ const Login = () => {
             const userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
              
             if (userRole === 'Admin') {
-                console.log("halo")
                 navigate('/products');
+                window.location.reload();
             } else if (userRole === "Customer") {
                 navigate('/shop');
+                window.location.reload();
             }
         } catch (err) {
             setError('Invalid login credentials');

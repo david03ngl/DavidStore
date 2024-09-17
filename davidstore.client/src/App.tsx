@@ -7,14 +7,10 @@ import ProductsPage from './pages/products';
 import ProductDetails from './pages/products/components/ProductIDetails';
 import ShopsPage from './pages/shop';
 import ShopDetails from './pages/shop/components/ShopDetails';
-import CategoriesPage from './pages/categories';
-import CategoryDetails from './pages/categories/components/CategoryDetails';
 import Login from './pages/sign/login';
 import Register from './pages/sign/register';
 import CartPage from './pages/cart';
-import ProfilePage from './pages/profile';
 import SearchPage from './pages/shop/search';
-import AuthGuardedRoute from './pages/AuthGuardedRoute';
 import ProtectedRoute from './protectedRoute';
 
 import './App.css';
