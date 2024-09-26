@@ -26,7 +26,17 @@ const productApi = baseApi
                     'Content-Type': 'application/json', // Set Content-Type header
                 },
             }),
-        }),
+          }),
+          createProduct: build.mutation<void, { [key: string]: any }>({
+              query: (product) => ({
+                  url: 'product', // No ID in the URL for adding a new product
+                  method: 'POST', // Use POST for adding a new product
+                  body: product, // Send the new product data
+                  headers: {
+                      'Content-Type': 'application/json', // Set Content-Type header
+                  },
+              }),
+          }),
     }),
   });
 
@@ -35,5 +45,6 @@ export const {
   useGetProductQuery,
   useSearchProductsQuery,
     useLazySearchProductsQuery,
-    useUpdateProductMutation
+    useUpdateProductMutation,
+    useCreateProductMutation
 } = productApi;

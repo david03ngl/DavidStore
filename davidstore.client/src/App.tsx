@@ -4,7 +4,8 @@ import HomePage from './pages/home';
 import ProductCategoriesPage from './pages/productCategories';
 import ProductCategoryDetails from './pages/productCategories/components/ProductCategoryDetails';
 import ProductsPage from './pages/products';
-import ProductDetails from './pages/products/components/ProductIDetails';
+import ProductDetails from './pages/products/components/ProductDetails';
+import ProductAdds from './pages/products/components/ProductAdd';
 import ShopsPage from './pages/shop';
 import ShopDetails from './pages/shop/components/ShopDetails';
 import Login from './pages/sign/login';
@@ -25,6 +26,7 @@ const App = () => (
             </Route>
             <Route path='products'>
                 <Route index element={<ProtectedRoute role="Admin"><ProductsPage /></ProtectedRoute>} />
+                <Route path='add' element={<ProtectedRoute role="Admin"><ProductAdds /></ProtectedRoute>} />
                 <Route path=':id' element={<ProtectedRoute role="Admin"><ProductDetails /></ProtectedRoute>} />
             </Route>
             <Route path='shops'>

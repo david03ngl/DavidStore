@@ -19,7 +19,6 @@ const Header: FC<HeaderProps> = () => {
         try {
             const decodedToken = jwtDecode(token) as any;
             userRole = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-            console.log(userRole)
         } catch (error) {
             console.error('Failed to decode token:', error);
         }
@@ -47,7 +46,7 @@ const Header: FC<HeaderProps> = () => {
                 )}
                 {userRole === 'Customer' && (
                     <>
-                        <Link to='/shop'>Shop</Link>
+                        <Link to='/shops'>Shop</Link>
                     </>
                 )}
             </nav>

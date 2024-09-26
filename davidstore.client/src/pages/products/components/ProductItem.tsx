@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import StarIcon from '@mui/icons-material/Star';
-import { IProduct, IProductVariant } from '../../../redux/products/product.types';
+import { IProduct } from '../../../redux/products/product.types';
 
 const ProductItem: FC<IProduct> = ({ id, name, productVariants }) => {
     const navigate = useNavigate();
@@ -17,10 +16,6 @@ const ProductItem: FC<IProduct> = ({ id, name, productVariants }) => {
                 <Link to={`/products/${String(id)}`}>{name}</Link>
             </div>
             <div className='product-title'>
-                {/*<div className='product-rating'>*/}
-                {/*  <StarIcon />*/}
-                {/*  {rating}*/}
-                {/*</div>*/}
                 {productVariants?.map((item, index) => (
                     <li key={index}>{item.name}</li>
                 ))}

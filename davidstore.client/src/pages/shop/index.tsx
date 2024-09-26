@@ -6,7 +6,7 @@ import Loading from '../../components/Loading';
 import ErrorMessage from '../../components/ErrorMessage';
 import Pagination from '../../components/Pagination';
 
-const ProductsPage = () => {
+const ShopsPage = () => {
   const [activePage, setActivePage] = useState(1);
   const { data, error, isLoading } = useGetProductsQuery({
     limit: 10,
@@ -31,4 +31,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default ShopsPage;

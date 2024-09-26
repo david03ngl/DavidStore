@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useGetProductQuery, useUpdateProductMutation } from '../../../redux/products/product.api';
 import { useGetProductCategoriessQuery } from '../../../redux/productCategories/productCategory.api';
 import Loading from '../../../components/Loading';
@@ -28,7 +28,7 @@ const ProductDetails = () => {
 
     const [productVariants, setProductVariants] = useState<IProductVariant[]>([
         {
-            id: Date.now(), // Use a unique identifier for each new variant
+            id: 0,
             code: '',
             name: '',
             imageLocation: '',
@@ -42,6 +42,7 @@ const ProductDetails = () => {
         },
     ]);
 
+    const navigate = useNavigate();
     const { id } = useParams() as ProductParamsId;
     const { data: product, isLoading } = useGetProductQuery({ id });
     const { data } = useGetProductCategoriessQuery();
@@ -95,7 +96,7 @@ const ProductDetails = () => {
     // Add a new product variant
     const addProductVariant = () => {
         const newVariant: IProductVariant = {
-            id: 0, // Use a unique identifier for each new variant
+            id: 0,
             code: '',
             name: '',
             imageLocation: '',
@@ -118,6 +119,7 @@ const ProductDetails = () => {
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        console.log(products)
         e.preventDefault();
 
         const newVariants = [];
@@ -147,6 +149,8 @@ const ProductDetails = () => {
             // Call the mutation to update the product in the database
             await updateProduct(newProduct).unwrap();
             console.log('Product updated successfully');
+            navigate('/products/');
+            window.location.reload();
         } catch (error) {
             console.error('Failed to update product:', error);
         }
@@ -188,14 +192,14 @@ const ProductDetails = () => {
                     <select
                         id="category-select"
                         name="productCategoryId"
-                        value={product.productCategoryId}
+                        value={products.productCategoryId}
                         onChange={handleProductChange}
                         className="form-control"
                     >
                         <option value="" disabled>
                             Select a category
                         </option>
-                        {data?.map((category) => (
+                        {data?.map((category: any) => (
                             <option key={category.id} value={category.id}>
                                 {category.name}
                             </option>

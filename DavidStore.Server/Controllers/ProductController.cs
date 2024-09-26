@@ -51,12 +51,44 @@ public class ProductController : ControllerBase
 
     // POST: api/Product
     [HttpPost]
-    public async Task<ActionResult<Product>> PostProduct(Product product)
+    public async Task<ActionResult<Product>> PostProduct([FromBody] ProductDto dto)
     {
-        _context.Products.Add(product);
+        // Step 1: Create and save the product first
+        var newProduct = new Product
+        {
+            Plu = dto.Plu,
+            Name = dto.Name,
+            ProductCategoryId = dto.ProductCategoryId,
+            Active = dto.Active
+        };
+
+        _context.Products.Add(newProduct);
+
+        // Save the product to get the ProductId
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+        // Get the saved ProductId
+        var savedProductId = newProduct.Id;
+
+        // Step 2: Create the product variants and assign the saved ProductId
+        var newProductVariants = dto.ProductVariants.Select(variant => new ProductVariant
+        {
+            Code = variant.Code,
+            Name = variant.Name,
+            ImageLocation = variant.ImageLocation,
+            Qty = variant.Qty,
+            Price = variant.Price,
+            Active = variant.Active,
+            ProductId = savedProductId  // Assign the ProductId to each variant
+        }).ToList();
+
+        // Step 3: Add the product variants to the DbContext
+        _context.ProductVariants.AddRange(newProductVariants);
+
+        // Save the product variants
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
     }
 
     // PUT: api/Product/5
