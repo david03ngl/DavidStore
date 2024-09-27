@@ -175,7 +175,7 @@ const AddProduct = () => {
                         onChange={handleProductChange}
                         className="form-control"
                     >
-                        <option value="" disabled>
+                        <option value={0}>
                             Select a category
                         </option>
                         {categories?.map((category: any) => (

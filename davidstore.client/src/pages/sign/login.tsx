@@ -9,6 +9,8 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    localStorage.removeItem('token');
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
