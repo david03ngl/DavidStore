@@ -171,6 +171,21 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
+        var productVariants = await _context.ProductVariants
+            .Where(pv => pv.ProductId == id)
+            .ToListAsync();
+
+        if (productVariants == null || !productVariants.Any())
+        {
+            return NotFound();  // Return 404 if no variants are found
+        }
+
+        // Remove the product variants
+        _context.ProductVariants.RemoveRange(productVariants);
+
+        // Save changes to the database
+        await _context.SaveChangesAsync();
+
         var product = await _context.Products.FindAsync(id);
         if (product == null)
         {
