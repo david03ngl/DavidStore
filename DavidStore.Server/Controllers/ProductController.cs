@@ -94,7 +94,6 @@ public class ProductController : ControllerBase
         return CreatedAtAction(nameof(GetProduct), new { id = newProduct.Id }, newProduct);
     }
 
-    // PUT: api/Product/5
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto productDto)
     {
@@ -110,6 +109,36 @@ public class ProductController : ControllerBase
         if (product == null)
         {
             return NotFound();
+        }
+
+        // List of updated variants from the client
+        var updatedVariants = productDto.ProductVariants;
+
+        // Get IDs of the variants received in the request
+        var updatedVariantIds = updatedVariants.Select(v => v.Id).ToList();
+
+        // Find variants that are in the database but NOT in the updated list
+        var variantsToDelete = product.ProductVariants
+            .Where(v => !updatedVariantIds.Contains(v.Id))
+            .ToList();
+
+        // Check if any of these variants are used in TransactionDetails
+        foreach (var variant in variantsToDelete)
+        {
+            var isReferenced = await _context.TransactionDetails
+                .AnyAsync(td => td.ProductVariantId == variant.Id);
+
+            if (isReferenced)
+            {
+                // Instead of deleting, mark the variant as inactive
+                variant.Active = false;
+                _context.Entry(variant).State = EntityState.Modified;
+            }
+            else
+            {
+                // Safe to delete since no references exist
+                _context.ProductVariants.Remove(variant);
+            }
         }
 
         // Update product properties
@@ -165,7 +194,6 @@ public class ProductController : ControllerBase
 
         return NoContent();
     }
-
 
     // DELETE: api/Product/5
     [HttpDelete("{id}")]
